@@ -1,0 +1,15 @@
+spring:
+  config:
+    activate:
+      on-profile: "qa"
+
+build:
+  version: "2.0"
+
+cards:
+  message: "Welcome to MrxBank cards related QA APIs "
+  contactDetails:
+    name: "Muthuraja - SDE-1"
+    email: "rajamuthu107@gmail.com"
+  onCallSupport:
+    - (91) 6369366095

@@ -14,3 +14,20 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
+  config:
+    import:
+      - "application_qa.yml"
+      - "application_prod.yml"
+  profiles:
+    active:
+      - "qa"
+build:
+  version: "3.0"
+
+cards:
+  message: "Welcome to mrxbank cards related local APIs "
+  contactDetails:
+    name: "Muthuraja - Product Owner"
+    email: "rajamuthu107@gmail.com"
+  onCallSupport:
+    - (91) 6369366095

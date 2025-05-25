@@ -1,0 +1,15 @@
+spring:
+  config:
+    activate:
+      on-profile: "qa"
+
+build:
+  version: "2.0"
+
+loans:
+  message: "Welcome to mrxbank loans related local APIs "
+  contactDetails:
+    name: "Muthuraja - Product Owner"
+    email: "rajamuthu107@gmail.com"
+  onCallSupport:
+    - (91) 6369366095

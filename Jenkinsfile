@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    tools {
+        maven 'Maven3'
+    }
+
     triggers {
         githubPush()
     }
@@ -8,29 +12,35 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                echo 'Cloning code...'
                 checkout scm
             }
         }
 
         stage('Build with Jib') {
             steps {
-                echo 'Building Docker images using Jib...'
-                sh './mvnw clean compile jib:dockerBuild -DskipTests'
+                echo 'Building local Docker images using Jib...'
+                dir('accounts') {
+                    sh './mvnw compile jib:dockerBuild -DskipTests'
+                }
+                dir('cards') {
+                    sh './mvnw compile jib:dockerBuild -DskipTests'
+                }
+                dir('loans') {
+                    sh './mvnw compile jib:dockerBuild -DskipTests'
+                }
             }
         }
 
-        stage('Logs') {
+        stage('List Docker Images') {
             steps {
-                echo 'Listing target directory...'
-                sh 'ls -l'
+                sh 'docker images'
             }
         }
     }
 
     post {
         always {
-            echo 'Pipeline completed.'
+            echo 'Pipeline execution completed.'
         }
     }
 }

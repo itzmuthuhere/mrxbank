@@ -19,7 +19,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 				description = "MrxBank Accounts microservice REST API Documentation",
 				version = "v1",
 				contact = @Contact(
-						name = "Muthu Raja",
+						name = "Muthu Raja R",
 						email = "rajamuthu107@gmail.com",
 						url = "www.linkedin.com/in/itzmuthuhere"
 				)

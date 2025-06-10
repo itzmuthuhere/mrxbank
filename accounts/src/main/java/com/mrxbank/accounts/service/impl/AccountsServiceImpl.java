@@ -13,6 +13,8 @@ import com.mrxbank.accounts.repository.AccountsRepository;
 import com.mrxbank.accounts.repository.CustomerRepository;
 import com.mrxbank.accounts.service.IAccountsService;
 import lombok.AllArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -23,6 +25,7 @@ import java.util.Random;
 @AllArgsConstructor
 public class AccountsServiceImpl  implements IAccountsService {
 
+    private static final Logger log = LoggerFactory.getLogger(AccountsServiceImpl.class);
     private AccountsRepository accountsRepository;
     private CustomerRepository customerRepository;
 
@@ -67,6 +70,7 @@ public class AccountsServiceImpl  implements IAccountsService {
 
     @Override
     public boolean updateAccount(CustomerDto customerDto) {
+        log.info("into update account");
         boolean isUpdated = false;
         AccountsDto accountsDto = customerDto.getAccountsDto();
         if(accountsDto !=null ){

@@ -2,61 +2,56 @@ pipeline {
     agent any
 
     tools {
-        maven 'Maven' // Use the Maven tool configured in Jenkins
+        maven 'Maven'
     }
 
     environment {
         VERSION = 'v1'
     }
 
-    options {
-        skipStagesAfterUnstable()
-        timeout(time: 10, unit: 'MINUTES')
-        timestamps()
-    }
-
-    triggers {
-        githubPush() // Trigger build on push from GitHub webhook
-    }
-
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main',
-                    url: 'https://github.com/itzmuthuhere/mrxbank.git'
+                git 'https://github.com/itzmuthuhere/mrxbank.git'
             }
         }
 
-        stage('Detect Changed Services') {
+        stage('Detect Changes') {
             steps {
                 script {
-                    changedDirs = sh(
-                        script: "git diff --name-only HEAD~1 HEAD | cut -d/ -f1 | sort -u",
+                    def commitCount = sh(
+                        script: 'git rev-list --count HEAD',
                         returnStdout: true
-                    ).trim().split("\n").findAll { it in ['accounts', 'cards', 'loans'] }
+                    ).trim().toInteger()
 
-                    if (changedDirs.isEmpty()) {
-                        currentBuild.result = 'SUCCESS'
-                        echo "🟢 No relevant service changes detected. Skipping build."
-                        skipBuild = true
+                    if (commitCount < 2) {
+                        echo "Initial run or shallow clone – building all services"
+                        changedDirs = ['accounts', 'loans', 'cards']
                     } else {
-                        echo "📦 Services changed: ${changedDirs.join(', ')}"
-                        skipBuild = false
+                        def diff = sh(
+                            script: 'git diff --name-only HEAD~1 HEAD || echo ""',
+                            returnStdout: true
+                        ).trim()
+
+                        changedDirs = diff ? diff.split("\n").collect { it.split("/")[0] }.unique() : []
                     }
+
+                    echo "Changed services: ${changedDirs}"
                 }
             }
         }
 
         stage('Build with Jib') {
             when {
-                expression { return !skipBuild }
+                expression { return changedDirs && changedDirs.size() > 0 }
             }
             steps {
                 script {
                     changedDirs.each { service ->
-                        dir(service) {
-                            echo "🚧 Building $service with Jib..."
-                            sh "mvn compile jib:dockerBuild -DskipTests"
+                        if (['accounts', 'cards', 'loans'].contains(service)) {
+                            dir(service) {
+                                sh "mvn compile jib:dockerBuild -DskipTests"
+                            }
                         }
                     }
                 }
@@ -64,26 +59,19 @@ pipeline {
         }
 
         stage('Deploy with Docker Compose') {
-            when {
-                expression { return !skipBuild }
-            }
             steps {
-                echo "🚀 Starting services with Docker Compose..."
-                sh "docker-compose down || true"
-                sh "docker-compose up -d --build"
+                sh 'docker-compose down || true'
+                sh 'docker-compose up -d'
             }
         }
     }
 
     post {
-        always {
-            echo "📜 Pipeline finished: ${currentBuild.currentResult}"
-        }
         success {
-            echo '✅ All services built and deployed successfully!'
+            echo '✅ All services built and deployed!'
         }
         failure {
-            echo '❌ Pipeline failed. Check logs above.'
+            echo '❌ Build or deployment failed.'
         }
     }
 }

@@ -21,6 +21,9 @@ pipeline {
         }
 
         stage('Build with Jib') {
+            options {
+                timeout(time: 30, unit: 'MINUTES') // ⏱ Timeout set to 30 mins
+            }
             steps {
                 echo '🔧 Building Docker images using Jib...'
                 dir('accounts') {
@@ -36,6 +39,9 @@ pipeline {
         }
 
         stage('List Docker Images') {
+            options {
+                timeout(time: 5, unit: 'MINUTES') // ⏱ Shorter timeout here
+            }
             steps {
                 bat 'docker images'
             }

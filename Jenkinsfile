@@ -20,20 +20,20 @@ pipeline {
             steps {
                 echo 'Building local Docker images using Jib...'
                 dir('accounts') {
-                    sh './mvnw compile jib:dockerBuild -DskipTests'
+                    bat '.\\mvnw.cmd compile jib:dockerBuild -DskipTests'
                 }
                 dir('cards') {
-                    sh './mvnw compile jib:dockerBuild -DskipTests'
+                    bat '.\\mvnw.cmd compile jib:dockerBuild -DskipTests'
                 }
                 dir('loans') {
-                    sh './mvnw compile jib:dockerBuild -DskipTests'
+                    bat '.\\mvnw.cmd compile jib:dockerBuild -DskipTests'
                 }
             }
         }
 
         stage('List Docker Images') {
             steps {
-                sh 'docker images'
+                bat 'docker images'
             }
         }
     }

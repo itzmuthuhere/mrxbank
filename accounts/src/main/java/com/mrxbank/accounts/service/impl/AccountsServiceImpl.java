@@ -71,17 +71,7 @@ public class AccountsServiceImpl  implements IAccountsService {
     @Override
     public boolean updateAccount(CustomerDto customerDto) {
         log.info("into update accounts");
-        log.info("into update accounts");
-        log.info("into update accounts");
-        log.info("into update accounts");
-        log.info("into update accounts");
-        log.info("into update accounts");
-        log.info("into update accounts");
-        log.info("into update accounts");
-        log.info("into update accounts");
-        log.info("into update accounts");
-        log.info("into update accounts");
-        log.info("into update accounts");
+
         boolean isUpdated = false;
         AccountsDto accountsDto = customerDto.getAccountsDto();
         if(accountsDto !=null ){

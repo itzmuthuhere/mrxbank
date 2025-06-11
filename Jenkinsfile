@@ -5,6 +5,10 @@ pipeline {
         maven 'maven3'
     }
 
+    environment {
+        MAVEN_OPTS = "-Dmaven.repo.local=C:\\maven-cache"
+    }
+
     triggers {
         githubPush()
     }
@@ -18,15 +22,15 @@ pipeline {
 
         stage('Build with Jib') {
             steps {
-                echo 'Building local Docker images using Jib...'
+                echo '🔧 Building Docker images using Jib...'
                 dir('accounts') {
-                    bat '.\\mvnw.cmd compile jib:dockerBuild -DskipTests'
+                    bat '.\\mvnw.cmd --batch-mode compile jib:dockerBuild -DskipTests'
                 }
                 dir('cards') {
-                    bat '.\\mvnw.cmd compile jib:dockerBuild -DskipTests'
+                    bat '.\\mvnw.cmd --batch-mode compile jib:dockerBuild -DskipTests'
                 }
                 dir('loans') {
-                    bat '.\\mvnw.cmd compile jib:dockerBuild -DskipTests'
+                    bat '.\\mvnw.cmd --batch-mode compile jib:dockerBuild -DskipTests'
                 }
             }
         }
@@ -40,7 +44,7 @@ pipeline {
 
     post {
         always {
-            echo 'Pipeline execution completed.'
+            echo '✅ Pipeline execution completed.'
         }
     }
 }
